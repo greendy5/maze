@@ -29,9 +29,35 @@ Made by greendy5.
 */
 
 #include <iostream>
-#include <windows.h>
 #include <conio.h>
 #include <fstream>
+#ifdef _WIN32 || _WIN64
+#include <windows.h>
+#endif
+
+void ClrScr()
+{
+#ifdef _WIN32 || _WIN64
+	CONSOLE_SCREEN_BUFFER_INFO buffer_info;
+	COORD coord = { 0, 0 };
+	if (!GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &buffer_info))
+		return;
+	int spaceCount = buffer_info.dwSize.X * buffer_info.dwSize.Y;
+	unsigned long spaceWriten;
+	if (!FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', spaceCount, coord, &spaceWriten))
+	{
+		std::cerr << "Could not fill console width spaces";
+		return;
+	}
+	if (!SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord))
+	{
+		std::cerr << "Could not set cursor position";
+		return;
+	}
+#else
+#error This platform doesn't support
+#endif
+}
 
 using namespace std;
 
@@ -74,14 +100,18 @@ void Victory(unsigned short LevelNum, unsigned short Health){
 	system("cls");
 	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t     Victory!\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t Do you want continue?[y]/[n]";
 	cout << "\n\t\t\t\t\t";
+
 	char choice;
 	cin >> choice;
+
 	switch (choice) {
 	case 'y': {
 		LevelNum++;
 		Loop(LevelNum, Health);
 	} break;
+
 	case 'n': exit(0); break;
+
 	case 't': {
 		unsigned short n;
 		cout << "\t\t\t\t Input Level Number: ";
@@ -94,7 +124,7 @@ void Victory(unsigned short LevelNum, unsigned short Health){
 
 }
 
-int Data(unsigned short Management, unsigned short StopGame, unsigned short Score, unsigned short Items, unsigned short LevelNum, unsigned short Health){
+void Data(unsigned short Management, unsigned short StopGame, unsigned short Score, unsigned short Items, unsigned short LevelNum, unsigned short Health){
 	if (Management == 1) 
 	{
 		GameOver(LevelNum, Health);
@@ -113,20 +143,21 @@ int Data(unsigned short Management, unsigned short StopGame, unsigned short Scor
 			StopGame = 1;
 		}
 	}
-
 	Management = 2;
-	return Management, StopGame, Score, Items;
 }
-void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArray[24][24], unsigned short Health) {
+void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArray[24][24], unsigned short Health, unsigned short y, unsigned short x) {
+
 	unsigned short keysArrow;
 	unsigned short heart = 3;
 	unsigned short Score = 0;
 	unsigned short StopGame(0);
-	unsigned short s1 = 0;
-	unsigned short s2 = 1;
 
 	do {
-		system("cls");
+
+		/*system("Cls");*/
+		/*ClrScr();*/
+		ClrScr();
+
 		for (unsigned short i = 0; i < 23; i++)
 		{
 			for (unsigned short j = 0; j < 23; j++)
@@ -151,6 +182,7 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			}
 			cout << endl;
 		}
+
 		cout << "Level: " << LevelNum << endl;
 		cout << "Lifes: " << Health << endl;
 		cout << "Collected <>: " << Score << "/" << Items << endl;
@@ -160,48 +192,88 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 		if (keysArrow == 0) keysArrow = _getch();
 		switch (keysArrow) {
 		case 80: {
-			LevelArray[s1][s2] = 1;
-			s1++;
-			if (LevelArray[s1][s2] == 4) {
+			LevelArray[y][x] = 1;
+			y++;
+			if (LevelArray[y][x] == 4) {
 				Score++;
 			}
-			Data(LevelArray[s1][s2], StopGame, Score, Items, LevelNum, Health);
-			LevelArray[s1][s2] = 2;
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
 		}break;
 		case 72: {
-			LevelArray[s1][s2] = 1;
-			s1--;
-			if (LevelArray[s1][s2] == 4) {
+			LevelArray[y][x] = 1;
+			y--;
+			if (LevelArray[y][x] == 4) {
 				Score++;
 			}
-			Data(LevelArray[s1][s2], StopGame, Score, Items, LevelNum, Health);
-			LevelArray[s1][s2] = 2;
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
 		}break;
 		case 77: {
-			LevelArray[s1][s2] = 1;
-			s2++;
-			if (LevelArray[s1][s2] == 4) {
+			LevelArray[y][x] = 1;
+			x++;
+			if (LevelArray[y][x] == 4) {
 				Score++;
 			}
-			Data(LevelArray[s1][s2], StopGame, Score, Items, LevelNum, Health);
-			LevelArray[s1][s2] = 2;
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
 		}break;
 		case 75: {
-			LevelArray[s1][s2] = 1;
-			s2--;
-			if (LevelArray[s1][s2] == 4) {
+			LevelArray[y][x] = 1;
+			x--;
+			if (LevelArray[y][x] == 4) {
 				Score++;
 			}
-			Data(LevelArray[s1][s2], StopGame, Score, Items, LevelNum, Health);
-			LevelArray[s1][s2] = 2;
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
 		}break;
-		default: WindowControl(LevelNum, Items, LevelArray, Health); break;
+		/*case 107: {
+			LevelArray[y][x] = 0;
+			y++;
+			if (LevelArray[y][x] == 4) {
+				Score++;
+			}
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
+		}break;
+		case 105: {
+			LevelArray[y][x] = 0;
+			y--;
+			if (LevelArray[y][x] == 4) {
+				Score++;
+			}
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
+		}break;
+		case 108: {
+			LevelArray[y][x] = 0;
+			x++;
+			if (LevelArray[y][x] == 4) {
+				Score++;
+			}
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
+		}break;
+		case 106: {
+			LevelArray[y][x] = 0;
+			x--;
+			if (LevelArray[y][x] == 4) {
+				Score++;
+			}
+			Data(LevelArray[y][x], StopGame, Score, Items, LevelNum, Health);
+			LevelArray[y][x] = 2;
+		}break;*/
+
+		default: WindowControl(LevelNum, Items, LevelArray, Health, y, x); break;
 		}
 	} while (true);
 }
 void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
+
 	char LevelArray[24][24];
 	unsigned short Items = 0;
+	unsigned short y = 0;
+	unsigned short x = 0;
 	ifstream InputLevel1("level1.txt");
 	ifstream InputLevel3("level2.txt");
 	ifstream InputLevel2("level3.txt");
@@ -213,6 +285,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
 				InputLevel1.get(LevelArray[i][j]);
+				LevelArray[i][j] = LevelArray[i][j] - '0';
+				if (LevelArray[i][j] == 4) Items++;
+				if (LevelArray[i][j] == 2) {
+					y = i;
+					x = j;
+				}
 			}
 		}
 	} break;
@@ -221,6 +299,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
 				InputLevel2.get(LevelArray[i][j]);
+				LevelArray[i][j] = LevelArray[i][j] - '0';
+				if (LevelArray[i][j] == 4) Items++;
+				if (LevelArray[i][j] == 2) {
+					y = i;
+					x = j;
+				}
 			}
 		}
 	} break;
@@ -229,6 +313,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
 				InputLevel3.get(LevelArray[i][j]);
+				LevelArray[i][j] = LevelArray[i][j] - '0';
+				if (LevelArray[i][j] == 4) Items++;
+				if (LevelArray[i][j] == 2) {
+					y = i;
+					x = j;
+				}
 			}
 		}
 	} break;
@@ -237,6 +327,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
 				InputLevel4.get(LevelArray[i][j]);
+				LevelArray[i][j] = LevelArray[i][j] - '0';
+				if (LevelArray[i][j] == 4) Items++;
+				if (LevelArray[i][j] == 2) {
+					y = i;
+					x = j;
+				}
 			}
 		}
 	} break;
@@ -245,28 +341,31 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
 				InputLevel5.get(LevelArray[i][j]);
+				LevelArray[i][j] = LevelArray[i][j] - '0';
+				if (LevelArray[i][j] == 4) Items++;
+				if (LevelArray[i][j] == 2) {
+					y = i;
+					x = j;
+				}
 			}
 		}
 	} break;
 	}
-	for (int i = 0; i < 24; i++) {
-		for (int j = 0; j < 24; j++) {
-			LevelArray[i][j] = LevelArray[i][j] - '0';
-			if (LevelArray[i][j] == 4) Items++;
-		}
-	}
-	WindowControl(LevelNum, Items, LevelArray, Health);
+
+	WindowControl(LevelNum, Items, LevelArray, Health, y, x);
 }
 void Loop(unsigned short LevelNum, unsigned short Health) {
 	while (LevelNum<6) {
 		LevelGenerator(LevelNum, Health);
 	} if (LevelNum == 6) {
+		system("cls");
 		cout << "\n\n\n\n\n\n\t\t\t\t Well done!";
 		_getch();
 		exit(0);
 	}
 }
 void Menu() {
+
 	unsigned short MenuNum;
 	unsigned short Wall = 176;
 	unsigned short Door = 177;
@@ -316,6 +415,7 @@ void Menu() {
 		cout << "\n\n\t\t GAME RULES \n \t\t 1) Player(You):  [] \n\t\t 2) Items(You must collect all of them to escape level):  <> \n\t\t 3) Walls(You shouldn`t take collision with it):  "
 			<< (char)Wall << (char)Wall << "\n\t\t 4) Door(If You want to win, You should go there):  " << (char)Door << (char)Door << "\n\t\t 5) You have 3 lifes" << "\n\n\n\t\t Press some key to escape..." << endl;
 		_getch();
+		system("cls");
 		Menu();
 	}break;
 	case 4: {
@@ -326,6 +426,7 @@ void Menu() {
 
 
 }
+
 int main() {
 
 	Menu();
