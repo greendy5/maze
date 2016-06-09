@@ -95,7 +95,7 @@ void GameOver(unsigned short LevelNum, unsigned short Health, unsigned short Arr
 	case 13: {
 		switch (Arrow) {
 		case 1: {
-			LevelNum++;
+			Health--;
 			Loop(LevelNum, Health);
 		}break;
 		case 2: {
@@ -164,8 +164,7 @@ void Data(unsigned short Management, unsigned short Score, unsigned short Items,
 }
 void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArray[24][24], unsigned short Health, unsigned short y, unsigned short x) {
 
-	unsigned short keysArrow;
-	unsigned short heart = 3;
+	unsigned short Key;
 	unsigned short Score = 0;
 
 	for (;;) {
@@ -201,10 +200,10 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 		cout << "Lifes: " << Health << endl;
 		cout << "Collected <>: " << Score << "/" << Items << endl;
 
-		keysArrow = _getch();
-		keysArrow = _getch();
-		if (keysArrow == 0) keysArrow = _getch();
-		switch (keysArrow) {
+		Key = _getch();
+		if (Key == 224) Key = _getch();
+		
+		switch (Key) {
 		case 80: { //Up
 			LevelArray[y][x] = 1;
 			y++;
@@ -242,7 +241,7 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			LevelArray[y][x] = 2;
 		}break;
 
-		default: WindowControl(LevelNum, Items, LevelArray, Health, y, x); break;
+		default: Data(LevelArray[y][x], Score, Items, LevelNum, Health); break;
 		}
 	} 
 }
@@ -253,21 +252,21 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 	unsigned short y = 0;
 	unsigned short x = 0;
 
-	ifstream InputLevel1("level1.txt");
-	ifstream InputLevel3("level2.txt");
-	ifstream InputLevel2("level3.txt");
-	ifstream InputLevel4("level4.txt");
-	ifstream InputLevel5("level5.txt");
+	ifstream Map1("level1.txt");
+	ifstream Map2("level2.txt");
+	ifstream Map3("level3.txt");
+	ifstream Map4("level4.txt");
+	ifstream Map5("level5.txt");
 
 	switch (LevelNum) {
 	case 1:
 	{
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
-				InputLevel1.get(LevelArray[i][j]);				//level 1
+				Map1.get(LevelArray[i][j]);				//level 1
 				LevelArray[i][j] = LevelArray[i][j] - '0';		//Translate char into integer
 				if (LevelArray[i][j] == 4) Items++;				//Sum of "Items" in file
-				if (LevelArray[i][j] == 2) {
+				else if (LevelArray[i][j] == 2) {
 					y = i;										//Player's coordinates 
 					x = j;
 				}
@@ -277,12 +276,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 	case 2:
 	{
 		for (int i = 0; i < 24; i++) {
-			for (int j = 0; j < 24; j++) {				//level 2
-				InputLevel2.get(LevelArray[i][j]);
+			for (int j = 0; j < 24; j++) {						//level 2
+				Map3.get(LevelArray[i][j]);
 				LevelArray[i][j] = LevelArray[i][j] - '0';
-				if (LevelArray[i][j] == 4) Items++;
-				if (LevelArray[i][j] == 2) {
-					y = i;
+				if (LevelArray[i][j] == 4) Items++;				//Sum of "Items" in file
+				else if (LevelArray[i][j] == 2) {
+					y = i;										//Player's coordinates 
 					x = j;
 				}
 			}
@@ -291,12 +290,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 	case 3:
 	{
 		for (int i = 0; i < 24; i++) {
-			for (int j = 0; j < 24; j++) {				//level 3
-				InputLevel3.get(LevelArray[i][j]);
+			for (int j = 0; j < 24; j++) {						//level 3
+				Map2.get(LevelArray[i][j]);
 				LevelArray[i][j] = LevelArray[i][j] - '0';
-				if (LevelArray[i][j] == 4) Items++;
-				if (LevelArray[i][j] == 2) {
-					y = i;
+				if (LevelArray[i][j] == 4) Items++;				//Sum of "Items" in file
+				else if (LevelArray[i][j] == 2) {
+					y = i;										//Player's coordinates 
 					x = j;
 				}
 			}
@@ -306,11 +305,11 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 	{
 		for (int i = 0; i < 24; i++) {
 			for (int j = 0; j < 24; j++) {
-				InputLevel4.get(LevelArray[i][j]);		//level 4
+				Map4.get(LevelArray[i][j]);				//level 4
 				LevelArray[i][j] = LevelArray[i][j] - '0';
-				if (LevelArray[i][j] == 4) Items++;
-				if (LevelArray[i][j] == 2) {
-					y = i;
+				if (LevelArray[i][j] == 4) Items++;				//Sum of "Items" in file
+				else if (LevelArray[i][j] == 2) {
+					y = i;										//Player's coordinates 
 					x = j;
 				}
 			}
@@ -319,12 +318,12 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 	case 5:
 	{
 		for (int i = 0; i < 24; i++) {
-			for (int j = 0; j < 24; j++) {				//level 5
-				InputLevel5.get(LevelArray[i][j]);
+			for (int j = 0; j < 24; j++) {						//level 5
+				Map5.get(LevelArray[i][j]);
 				LevelArray[i][j] = LevelArray[i][j] - '0';
-				if (LevelArray[i][j] == 4) Items++;
-				if (LevelArray[i][j] == 2) {
-					y = i;								//Player's coordinates 
+				if (LevelArray[i][j] == 4) Items++;				//Sum of "Items" in file
+				else if (LevelArray[i][j] == 2) {
+					y = i;										//Player's coordinates 
 					x = j;
 				}
 			}
@@ -335,8 +334,8 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 }
 
 void Loop(unsigned short LevelNum, unsigned short Health) {
-	while (LevelNum<6) {								//Number of cycles 
-		LevelGenerator(LevelNum, Health);				//Generate level
+	while (LevelNum<6) {										//Number of cycles 
+		LevelGenerator(LevelNum, Health);						//Generate level
 	} if (LevelNum == 6) {
 		ClrScr();
 		cout << "\n\n\n\n\n\n\t\t\t\t Well done!";
@@ -346,68 +345,51 @@ void Loop(unsigned short LevelNum, unsigned short Health) {
 }
 
 void SubMenu(unsigned short Arrow) {
-		ClrScr();
-		cout << "\n\n\t\t\t Choose level: "; // The second point of Menu (choosing a level)
+	ClrScr();
+	unsigned short Category;
+	cout << "\n\n\t\t\t Choose level: ";					// The second point of Menu (choosing a level)
 
-		cout << (Arrow == 1 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 1";
-		cout << (Arrow == 2 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 2";
-		cout << (Arrow == 3 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 3";
-		cout << (Arrow == 4 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 4";
-		cout << (Arrow == 5 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 5";
-		cout << (Arrow == 6 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Exit to main menu";
+	cout << (Arrow == 1 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 1";
+	cout << (Arrow == 2 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 2";
+	cout << (Arrow == 3 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 3";
+	cout << (Arrow == 4 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 4";
+	cout << (Arrow == 5 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 5";
+	cout << (Arrow == 6 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Exit to main menu";
 
-		unsigned short Category = _getch();
+	Category = _getch();
+	if (Category == 224) Category = _getch();
 
-		switch (Category) {
-		case 72: {
-			Arrow--;
-			if (Arrow < 1) Arrow = 6;
-			SubMenu(Arrow);
-		} break;
-		case 80: {
-			Arrow++;
-			if (Arrow > 6) Arrow = 1;
-			SubMenu(Arrow);
-		} break;
-		case 13: {
-			switch (Arrow) {			//choosing a level
-			case 1: {
-				unsigned short LevelNum = 1;
-				unsigned short Health = 3;
-				Loop(LevelNum, Health);
-			}break;
-			case 2: {
-				unsigned short LevelNum = 2;
-				unsigned short Health = 3;
-				Loop(LevelNum, Health);
-			}break;
-			case 3: {
-				unsigned short LevelNum = 3;
-				unsigned short Health = 3;
-				Loop(LevelNum, Health);
-			}break;
-			case 4: {
-				unsigned short LevelNum = 4;
-				unsigned short Health = 3;
-				Loop(LevelNum, Health);
-			}break;
-			case 5: {
-				unsigned short LevelNum = 5;
-				unsigned short Health = 3;
-				Loop(LevelNum, Health);
-			}break;
-			case 6: {
-				Arrow = 1;
-				Menu(Arrow);
-			}break;
+	switch (Category) {
+	case 72: {
+		Arrow--;
+		if (Arrow < 1) Arrow = 6;
+		SubMenu(Arrow);
+	} break;
+	case 80: {
+		Arrow++;
+		if (Arrow > 6) Arrow = 1;
+		SubMenu(Arrow);
+	} break;
+	case 13: {
+		switch (Arrow) {			//choosing a level
+		case 6: {
+			Arrow = 1;
+			Menu(Arrow);
+		}break;
+		default: {
+			unsigned short LevelNum = Arrow;
+			unsigned short Health = 3;
+			Loop(LevelNum, Health);
+			break;
 		}
-		} break;
-		default: SubMenu(Arrow); break;
 		}
 	}
+	}
+}
 
 void Menu(unsigned short Arrow) { // Starting menu
 	ClrScr();
+	unsigned short Category;
 	unsigned short l = 178;
 	int IntroArray[5][23] = {
 		{ 1,0,0,0,1,0,0,1,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1, },
@@ -432,8 +414,10 @@ void Menu(unsigned short Arrow) { // Starting menu
 	cout <<(Arrow == 2 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Choose level";
 	cout <<(Arrow == 3 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Game rules";
 	cout <<(Arrow == 4 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Quit\n\t\t\t  ";
-	unsigned short Category = _getch();
 
+	Category = _getch();
+	if (Category == 224) Category = _getch();
+	
 	switch (Category) {
 	case 72: {
 		Arrow--;
