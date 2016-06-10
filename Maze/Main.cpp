@@ -32,6 +32,7 @@ Made by greendy5.
 #include <iostream>
 #include <conio.h>
 #include <fstream>
+#include <string>
 #ifdef _WIN32 || _WIN64
 #include <windows.h>
 #endif
@@ -62,19 +63,23 @@ void ClrScr()
 
 using namespace std;
 
-void Loop(unsigned short LevelNum, unsigned short Health);
+void Loop(unsigned short LevelNum, unsigned short Health, int TotalScore);
 void Menu(unsigned short Arrow);
 
-void GameOver(unsigned short LevelNum, unsigned short Health, unsigned short Arrow){
+void GameOver(unsigned short LevelNum, unsigned short Health, unsigned short Arrow, int TotalScore){
 	
-	ClrScr(); // it cleans screen (it's stable analog of system("cls")
+	ClrScr();																// it cleans screen (it's stable analog of system("cls")
 	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t     Game Over!\n\n\n\n\n\n";
-
-	if (Health < 1) { // it stops game, if count of lives = 0
-		_getch();
+	
+	if (Health < 1) {	// it stops game, if count of lives = 0	
+		char StatData[100];
+		cout << "\t\t\t\t Please enter your name: ";
+		ofstream fout("Statistics.txt", ios_base::app);
+		cin >> StatData;
+		fout <<"Player: " << StatData <<"   Level: "<< LevelNum <<"   Score: "<< TotalScore << endl;
+		fout.close();
 		Menu(1);
 	}
-
 	cout << "\t\t\t\t Do you want restart?[y]/[n]";							// it can continue game, if player lost previous play
 	cout << (Arrow == 1 ? "\n\n\t\t\t\t ->" : "\n\n\t\t\t\t   ") << " Yes";
 	cout << (Arrow == 2 ? "\n\n\t\t\t\t ->" : "\n\n\t\t\t\t   ") << " No";
@@ -85,36 +90,48 @@ void GameOver(unsigned short LevelNum, unsigned short Health, unsigned short Arr
 	case 72: {
 		Arrow--;
 		if (Arrow < 1) Arrow = 2;
-		GameOver(LevelNum, Health, Arrow);
+		GameOver(LevelNum, Health, Arrow, TotalScore);
 	} break;
 	case 80: {
 		Arrow++;
 		if (Arrow > 2) Arrow = 1;
-		GameOver(LevelNum, Health, Arrow);
+		GameOver(LevelNum, Health, Arrow, TotalScore);
 	} break;
 	case 13: {
 		switch (Arrow) {
 		case 1: {
 			Health--;
-			Loop(LevelNum, Health);
+			Loop(LevelNum, Health, TotalScore);
 		}break;
 		case 2: {
+			ClrScr();
+			char StatData[50];
+			cout << "\n\n\n\n\t\t\t\t Please enter your name: ";
+			ofstream fout("Statistics.txt", ios_base::app);
+			cin >> StatData;
+			fout << "Player: " << StatData << "   Level: " << LevelNum << "   Score: " << TotalScore << endl;
+			fout.close();
 			Menu(1);
 		}break;
 		}
 	} break;
-	default: GameOver(LevelNum, Health, Arrow); break;						//prevents default keys to escape errors
+	default: GameOver(LevelNum, Health, Arrow, TotalScore); break;						//prevents default keys to escape errors
 	}
 }
 
-void Victory(unsigned short LevelNum, unsigned short Health, unsigned short Arrow){
+void Victory(unsigned short LevelNum, unsigned short Health, unsigned short Arrow, int TotalScore){
 	ClrScr();
 	if (LevelNum == 5) {
 		ClrScr();
-		cout << "\n\n\n\n\n\n\t\t\t\t Well done!";
-		_getch();
-		exit(0);
+		char StatData[50];
+		cout << "\n\n\n\n\n\n\t\t\t\t Well done!\n\n\n\n\t\t\t\t Please enter your name: ";
+		ofstream fout("Statistics.txt", ios_base::app);
+		cin >> StatData;
+		fout << "Player: " << StatData << "   Level: " << LevelNum << "   Score: " << TotalScore << endl;
+		fout.close();
+		Menu(1);
 	}
+
 	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t     Victory!\n\n\n\n\n\n\n\t\t\t\t Do you want continue?[y]/[n]";
 	cout << (Arrow == 1 ? "\n\n\t\t\t\t ->" : "\n\n\t\t\t\t   ") << " Yes";
 	cout << (Arrow == 2 ? "\n\n\t\t\t\t ->" : "\n\n\t\t\t\t   ") << " No";
@@ -125,58 +142,62 @@ void Victory(unsigned short LevelNum, unsigned short Health, unsigned short Arro
 	case 72: {
 		Arrow--;
 		if (Arrow < 1) Arrow = 2;
-		Victory(LevelNum, Health, Arrow);
+		Victory(LevelNum, Health, Arrow, TotalScore);
 	} break;
 	case 80: {
 		Arrow++;
 		if (Arrow > 2) Arrow = 1;
-		Victory(LevelNum, Health, Arrow);
+		Victory(LevelNum, Health, Arrow, TotalScore);
 	} break;
 	case 13: {
 		switch (Arrow) {
 		case 1: {
 			LevelNum++;
-			Loop(LevelNum, Health);
+			Loop(LevelNum, Health, TotalScore);
 		}break;
 		case 2: {
+			ClrScr();
+			char StatData[50];
+			cout << "Please enter your name: ";
+			ofstream fout("Statistics.txt", ios_base::app);
+			cin >> StatData;
+			fout << "Player: " << StatData << "   Level: " << LevelNum << "   Score: " << TotalScore << endl;
+			fout.close();
 			Menu(1);
 		}break;
 		}
 	} break;
-	default: Victory(LevelNum,Health, Arrow); break;
+	default: Victory(LevelNum,Health, Arrow, TotalScore); break;
 	}
 }
 
-void Data(unsigned short Management, unsigned short Score, unsigned short Items, unsigned short LevelNum, unsigned short Health){ // this function directs to function of "Win"(Victory) or "Lose"(GameOver) (Number == Number of Wall)
-	unsigned short Arrow = 1;					
+void Data(unsigned short Management, unsigned short Score, unsigned short Items, unsigned short LevelNum, unsigned short Health, int TotalScore){ // this function directs to function of "Win"(Victory) or "Lose"(GameOver) (Number == Number of Wall)
+	unsigned short Arrow = 1;		
+
 	if (Management == 1)								
 	{
-		GameOver(LevelNum, Health, Arrow);
-
+		GameOver(LevelNum, Health, Arrow, TotalScore);
 	}
 	if (Management == 3)								//(DoorNum)
 	{
 		if (Score == Items)								// If Player collects all items, he will win a level 
 		{
-
-			Victory(LevelNum, Health, Arrow);			
+			Victory(LevelNum, Health, Arrow, TotalScore);
 		}
 		else
 		{
-			GameOver(LevelNum, Health, Arrow);		   
+			GameOver(LevelNum, Health, Arrow, TotalScore);
 		}
 	}
 	Management = 2;									   //(PlayerNum)
 }
-void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArray[24][24], unsigned short Health, unsigned short y, unsigned short x) {
+void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArray[24][24], unsigned short Health, unsigned short y, unsigned short x, int TotalScore) {
 
 	unsigned short Key;
 	unsigned short Score = 0;
 
 	for (;;) {
-
 		ClrScr();
-
 		for (unsigned short i = 0; i < 23; i++)
 		{
 			for (unsigned short j = 0; j < 23; j++)
@@ -201,10 +222,10 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			}
 			cout << endl;
 		}
-
 		cout << "Level: " << LevelNum << endl;
 		cout << "Lifes: " << Health << endl;
-		cout << "Collected <>: " << Score << "/" << Items << endl;
+		cout << "Collected <>: " << Score << "/" << Items << endl << endl;
+		cout << "If you want to escape, tap <q> key";
 
 		Key = _getch();
 		if (Key == 224) Key = _getch();
@@ -215,8 +236,9 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			y++;
 			if (LevelArray[y][x] == 4) {
 				Score++;
+				TotalScore++;
 			}
-			Data(LevelArray[y][x], Score, Items, LevelNum, Health);
+			Data(LevelArray[y][x], Score, Items, LevelNum, Health, TotalScore);
 			LevelArray[y][x] = 2;
 		}break;
 		case 72: { //Down
@@ -224,8 +246,10 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			y--;
 			if (LevelArray[y][x] == 4) {
 				Score++;
+				TotalScore++;
+
 			}
-			Data(LevelArray[y][x], Score, Items, LevelNum, Health);
+			Data(LevelArray[y][x], Score, Items, LevelNum, Health, TotalScore);
 			LevelArray[y][x] = 2;
 		}break;
 		case 77: { //Right
@@ -233,8 +257,9 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			x++;
 			if (LevelArray[y][x] == 4) {
 				Score++;
+				TotalScore++;
 			}
-			Data(LevelArray[y][x], Score, Items, LevelNum, Health);
+			Data(LevelArray[y][x], Score, Items, LevelNum, Health, TotalScore);
 			LevelArray[y][x] = 2;
 		}break;
 		case 75: { //Left
@@ -242,21 +267,26 @@ void WindowControl(unsigned short LevelNum, unsigned short Items, char LevelArra
 			x--;
 			if (LevelArray[y][x] == 4) {
 				Score++;
+				TotalScore++;
 			}
-			Data(LevelArray[y][x], Score, Items, LevelNum, Health);
+			Data(LevelArray[y][x], Score, Items, LevelNum, Health, TotalScore);
 			LevelArray[y][x] = 2;
 		}break;
+		case 113: { //Exit
 
-		default: Data(LevelArray[y][x], Score, Items, LevelNum, Health); break;
+			Menu(1);
+		}break;
+		default: Data(LevelArray[y][x], Score, Items, LevelNum, Health, TotalScore); break;
 		}
 	} 
 }
-void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
+void LevelGenerator(unsigned short LevelNum, unsigned short Health, int TotalScore) {
 
 	char LevelArray[24][24];
 	unsigned short Items = 0;
 	unsigned short y = 0;
 	unsigned short x = 0;
+	
 
 	ifstream Map1("level1.txt");
 	ifstream Map2("level2.txt");
@@ -336,16 +366,16 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 		}
 	} break;
 	}
-	WindowControl(LevelNum, Items, LevelArray, Health, y, x);
+	WindowControl(LevelNum, Items, LevelArray, Health, y, x, TotalScore);
 }
 
-void Loop(unsigned short LevelNum, unsigned short Health) {
+void Loop(unsigned short LevelNum, unsigned short Health, int TotalScore) {
 	while (LevelNum<6) {										//Number of cycles 
-		LevelGenerator(LevelNum, Health);						//Generate level
+		LevelGenerator(LevelNum, Health, TotalScore);						//Generate level
 	}
 }
 
-void SubMenu(unsigned short Arrow) {
+void SubMenu(unsigned short Arrow, int TotalScore) {
 	ClrScr();
 	unsigned short Category;
 	cout << "\n\n\t\t\t Choose level: ";					// The second point of Menu (choosing a level)
@@ -364,15 +394,15 @@ void SubMenu(unsigned short Arrow) {
 	case 72: {
 		Arrow--;
 		if (Arrow < 1) Arrow = 6;
-		SubMenu(Arrow);
+		SubMenu(Arrow, TotalScore);
 	} break;
 	case 80: {
 		Arrow++;
 		if (Arrow > 6) Arrow = 1;
-		SubMenu(Arrow);
+		SubMenu(Arrow, TotalScore);
 	} break;
 	case 13: {
-		switch (Arrow) {			//choosing a level
+		switch (Arrow, TotalScore) {			//choosing a level
 		case 6: {
 			Arrow = 1;
 			Menu(Arrow);
@@ -380,16 +410,58 @@ void SubMenu(unsigned short Arrow) {
 		default: {
 			unsigned short LevelNum = Arrow;
 			unsigned short Health = 3;
-			Loop(LevelNum, Health);
+			Loop(LevelNum, Health, TotalScore);
 			break;
 		}
 		}
 	}
 	}
 }
+void Statistics(unsigned short Arrow) {
+	ClrScr();
+	if (Arrow > 2) Arrow = 1;
+	ifstream fin("Statistics.txt");
+	char StatData[100];
+	cout << "\n\n\t\t\t\t Statistics \n\n\n";
+	while (!fin.eof()) {
+		fin.getline(StatData, 100);
+		cout <<"\t\t\t\t"<< StatData << endl;
+	}
 
+	cout << (Arrow == 1 ? "\n\t\t\t\t->" : "\n\t\t\t\t  ") << " Clean the statistics table";
+	cout << (Arrow == 2 ? "\n\t\t\t\t->" : "\n\t\t\t\t  ") << " Quit to main menu";
+
+	unsigned short Category = _getch();										// "Arrow control"
+	if(Category == 224) Category = _getch();
+	switch (Category) {
+	case 72: {
+		Arrow--;
+		if (Arrow < 1) Arrow = 2;
+		Statistics(Arrow);
+	} break;
+	case 80: {
+		Arrow++;
+		if (Arrow > 2) Arrow = 1;
+		Statistics(Arrow);
+	} break;
+	case 13: {
+		switch (Arrow) {
+		case 1: {
+			ofstream fin("Statistics.txt", std::ios::out);
+			Statistics(Arrow);
+		}break;
+		case 2: {
+			Menu(1);
+		}break;
+		}
+	} break;
+	default: Statistics(Arrow); break;
+	}
+	fin.close();
+	Menu(1);
+}
 void Menu(unsigned short Arrow) { // Starting menu
-
+	int TotalScore = 0;
 	ClrScr();
 	unsigned short Category;
 	unsigned short l = 178;
@@ -412,10 +484,11 @@ void Menu(unsigned short Arrow) { // Starting menu
 		cout << "\n\t\t\t";
 	}
 
-	cout <<(Arrow == 1 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Play";
-	cout <<(Arrow == 2 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Choose level";
-	cout <<(Arrow == 3 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Game rules";
-	cout <<(Arrow == 4 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Quit\n\t\t\t  ";
+	cout <<(Arrow == 1 ? "\n\t\t\t ->" : "\n\t\t\t   ") <<" Play";
+	cout <<(Arrow == 2 ? "\n\t\t\t ->" : "\n\t\t\t   ") <<" Choose level";
+	cout <<(Arrow == 3 ? "\n\t\t\t ->" : "\n\t\t\t   ") <<" Game rules";
+	cout <<(Arrow == 4 ? "\n\t\t\t ->" : "\n\t\t\t   ") <<" Statistics";
+	cout <<(Arrow == 5 ? "\n\t\t\t ->" : "\n\t\t\t   ") <<" Quit\n\t\t\t  ";
 
 	Category = _getch();
 	if (Category == 224) Category = _getch();
@@ -423,12 +496,12 @@ void Menu(unsigned short Arrow) { // Starting menu
 	switch (Category) {
 	case 72: {
 		Arrow--;
-		if (Arrow < 1) Arrow = 4;
+		if (Arrow < 1) Arrow = 5;
 		Menu(Arrow);
 	} break;
 	case 80: {
 		Arrow++;
-		if (Arrow > 4) Arrow = 1;
+		if (Arrow > 5) Arrow = 1;
 		Menu(Arrow);
 	} break;
 	case 13: {
@@ -436,11 +509,11 @@ void Menu(unsigned short Arrow) { // Starting menu
 		case 1: {			//start game
 			unsigned short LevelNum = 1;
 			unsigned short Health = 3;
-			Loop(LevelNum, Health);
+			Loop(LevelNum, Health, TotalScore);
 		} break;
 		case 2: {			//choosing a level
 			Arrow = 1;
-			SubMenu(Arrow);
+			SubMenu(Arrow, TotalScore);
 		}break;
 		case 3: {			//game rules
 			unsigned short Wall = 176;
@@ -451,7 +524,10 @@ void Menu(unsigned short Arrow) { // Starting menu
 			_getch();
 			Menu(Arrow);
 		}break;
-		case 4: {			//quit
+		case 4: {
+			Statistics(Arrow);
+		}
+		case 5: {			//quit
 			exit(0);
 		}break;
 		}
@@ -460,9 +536,8 @@ void Menu(unsigned short Arrow) { // Starting menu
 	}
 
 }
-
 int main() {
-	system("color 01");
+	system("color 09");
 	unsigned short Arrow = 1;
 	Menu(Arrow);
 	return 0;
