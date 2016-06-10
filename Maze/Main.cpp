@@ -109,6 +109,12 @@ void GameOver(unsigned short LevelNum, unsigned short Health, unsigned short Arr
 
 void Victory(unsigned short LevelNum, unsigned short Health, unsigned short Arrow){
 	ClrScr();
+	if (LevelNum == 5) {
+		ClrScr();
+		cout << "\n\n\n\n\n\n\t\t\t\t Well done!";
+		_getch();
+		exit(0);
+	}
 	cout << "\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t     Victory!\n\n\n\n\n\n\n\t\t\t\t Do you want continue?[y]/[n]";
 	cout << (Arrow == 1 ? "\n\n\t\t\t\t ->" : "\n\n\t\t\t\t   ") << " Yes";
 	cout << (Arrow == 2 ? "\n\n\t\t\t\t ->" : "\n\n\t\t\t\t   ") << " No";
@@ -336,11 +342,6 @@ void LevelGenerator(unsigned short LevelNum, unsigned short Health) {
 void Loop(unsigned short LevelNum, unsigned short Health) {
 	while (LevelNum<6) {										//Number of cycles 
 		LevelGenerator(LevelNum, Health);						//Generate level
-	} if (LevelNum == 6) {
-		ClrScr();
-		cout << "\n\n\n\n\n\n\t\t\t\t Well done!";
-		_getch();
-		exit(0);
 	}
 }
 
@@ -349,12 +350,12 @@ void SubMenu(unsigned short Arrow) {
 	unsigned short Category;
 	cout << "\n\n\t\t\t Choose level: ";					// The second point of Menu (choosing a level)
 
-	cout << (Arrow == 1 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 1";
-	cout << (Arrow == 2 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 2";
-	cout << (Arrow == 3 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 3";
-	cout << (Arrow == 4 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 4";
-	cout << (Arrow == 5 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Level 5";
-	cout << (Arrow == 6 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") << " Exit to main menu";
+	cout << (Arrow == 1 ? "\n\t\t\t ->" : "\n\t\t\t   ") << " Level 1";
+	cout << (Arrow == 2 ? "\n\t\t\t ->" : "\n\t\t\t   ") << " Level 2";
+	cout << (Arrow == 3 ? "\n\t\t\t ->" : "\n\t\t\t   ") << " Level 3";
+	cout << (Arrow == 4 ? "\n\t\t\t ->" : "\n\t\t\t   ") << " Level 4";
+	cout << (Arrow == 5 ? "\n\t\t\t ->" : "\n\t\t\t   ") << " Level 5";
+	cout << (Arrow == 6 ? "\n\t\t\t ->" : "\n\t\t\t   ") << " Exit to main menu";
 
 	Category = _getch();
 	if (Category == 224) Category = _getch();
@@ -388,6 +389,7 @@ void SubMenu(unsigned short Arrow) {
 }
 
 void Menu(unsigned short Arrow) { // Starting menu
+
 	ClrScr();
 	unsigned short Category;
 	unsigned short l = 178;
@@ -410,10 +412,10 @@ void Menu(unsigned short Arrow) { // Starting menu
 		cout << "\n\t\t\t";
 	}
 
-	cout <<(Arrow == 1 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Play";
-	cout <<(Arrow == 2 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Choose level";
-	cout <<(Arrow == 3 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Game rules";
-	cout <<(Arrow == 4 ? "\n\n\t\t\t ->" : "\n\n\t\t\t   ") <<" Quit\n\t\t\t  ";
+	cout <<(Arrow == 1 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Play";
+	cout <<(Arrow == 2 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Choose level";
+	cout <<(Arrow == 3 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Game rules";
+	cout <<(Arrow == 4 ? "\n\t\t\t >>" : "\n\t\t\t   ") <<" Quit\n\t\t\t  ";
 
 	Category = _getch();
 	if (Category == 224) Category = _getch();
@@ -444,7 +446,7 @@ void Menu(unsigned short Arrow) { // Starting menu
 			unsigned short Wall = 176;
 			unsigned short Door = 177;
 			ClrScr();
-			cout << "\n\n\t\t GAME RULES \n \t\t 1) Player(You):  [] \n\t\t 2) Items(You must collect all of them to escape level):  <> \n\t\t 3) Walls(You shouldn`t take collision with it):  "
+			cout << "\n\n\t\t GAME RULES \n\t\t 1) Player(You):  [] \n\t\t 2) Items(You must collect all of them to escape level):  <> \n\t\t 3) Walls(You shouldn`t take collision with it):  "
 				<< (char)Wall << (char)Wall << "\n\t\t 4) Door(If You want to win, You should go there):  " << (char)Door << (char)Door << "\n\t\t 5) You have 3 lifes" << "\n\n\n\t\t Press some key to escape..." << endl;
 			_getch();
 			Menu(Arrow);
