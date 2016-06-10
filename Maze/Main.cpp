@@ -28,7 +28,7 @@ the number of levels in which to create the conditions to continue or interrupt 
 
 Made by greendy5.
 */
-
+#include <time.h>
 #include <iostream>
 #include <conio.h>
 #include <fstream>
@@ -462,6 +462,7 @@ void Menu(unsigned short Arrow) { // Starting menu
 }
 
 int main() {
+	system("color 01");
 	unsigned short Arrow = 1;
 	Menu(Arrow);
 	return 0;
